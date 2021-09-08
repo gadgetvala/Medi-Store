@@ -1,0 +1,19 @@
+.headerComponent {
+  height: 10vh;
+  background-color: #22577a;
+  padding: 0 5rem 0 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerComponent img {
+  height: 4rem;
+}
+
+.headerComponent > p {
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  word-spacing: 2px;
+  color: #80ed99;
+}
