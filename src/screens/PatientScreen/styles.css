@@ -1,0 +1,22 @@
+.patientScreen {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin: 2rem 5rem 2rem 5rem;
+}
+
+.patientScreen_data {
+  margin-bottom: 20px;
+}
+.patientScreen_data > div {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.patientScreen_data:last-child {
+  margin-bottom: 0;
+}
