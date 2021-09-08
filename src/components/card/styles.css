@@ -1,0 +1,25 @@
+.card_detailsCard {
+  background-color: #38a3a5;
+  padding: 2rem;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  margin-left: 20px;
+}
+.card_detailsCard:first-child {
+  margin-left: 0;
+}
+
+.card_detailsCard p {
+  margin-bottom: 8px;
+}
+
+.card_detailsCard--header {
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  word-spacing: 2px;
+  color: #80ed99;
+  font-weight: bold;
+}
+.card_detailsCard--key {
+  font-weight: bold;
+}
