@@ -1,0 +1,29 @@
+.rolesScreen {
+  height: 100vh;
+  width: 100%;
+  background-color: #efefef;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.rolesScreen > a {
+  font-size: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #8cbda9;
+  border-radius: 10px;
+  letter-spacing: 3px;
+}
+
+.rolesScreen > a:first-child {
+  background-color: #57cc99;
+}
+.rolesScreen > a:first-child:hover {
+  background-color: #21cc82;
+}
+.rolesScreen > a:nth-child(2) {
+  background-color: #80ed99;
+}
+.rolesScreen > a:nth-child(2):hover {
+  background-color: #61e07f;
+}
