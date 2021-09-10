@@ -1,0 +1,32 @@
+.registerScreen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  background-color: #38a3a5;
+}
+
+.registerScreen > input {
+  width: 20rem;
+  height: 3rem;
+  padding: 1.2rem;
+  margin-bottom: 2rem;
+  font-size: 1.2rem;
+  border: 0;
+  border-radius: 5px;
+}
+
+.registerScreen > button,
+.registerScreen > .button {
+  width: 20rem;
+  height: 3rem;
+  margin-bottom: 2rem;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #80ed99;
+  border: 0;
+  border-radius: 5px;
+}
