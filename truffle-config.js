@@ -6,11 +6,11 @@ module.exports = {
       network_id: "*",
     },
   },
-  contracts_directory: "./contracts/",
-  contracts_build_directory: "./build/",
+  contracts_directory: "./src/contracts/",
+  contracts_build_directory: "./src/contracts/build/",
   compilers: {
     solc: {
-      version: "0.4.24",
+      version: "0.5.0",
       optimizer: {
         enabled: true,
         runs: 200,
