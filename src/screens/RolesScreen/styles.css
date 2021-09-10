@@ -1,18 +1,18 @@
 .rolesScreen {
-  height: 100vh;
   width: 100%;
-  background-color: #efefef;
+  height: 100vh;
   display: flex;
   align-items: center;
+  background-color: #38a3a5;
   justify-content: space-evenly;
 }
 
 .rolesScreen > a {
-  font-size: 1.5rem;
   padding: 1rem;
-  border: 1px solid #8cbda9;
+  font-size: 1.5rem;
   border-radius: 10px;
   letter-spacing: 3px;
+  border: 1px solid #8cbda9;
 }
 
 .rolesScreen > a:first-child {
