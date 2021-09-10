@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useEffect, useContext } from "react";
 import Header from "components/header/Header";
 import Card from "components/card/Card";
+import { AppContext } from "context/AppContext";
 import "./styles.css";
 
 const PatientScreen = () => {
+  const { user, setNotificationTostValue } = useContext(AppContext);
+
+  console.log(user);
   return (
     <div>
-      <Header name="Suraj" />
+      <Header name={user.name} />
       <div className="patientScreen">
         <div className="patientScreen_data">
           <h2>Patient Data</h2>
@@ -14,14 +18,18 @@ const PatientScreen = () => {
             <Card>
               <p className="card_detailsCard--header">Patient Details</p>
               <p>
-                <span className="card_detailsCard--key">Name:</span> Suraj
+                <span className="card_detailsCard--key">Name:</span> {user.name}
               </p>
               <p>
-                <span className="card_detailsCard--key">DOB:</span> 29 Feb 2000
+                <span className="card_detailsCard--key">DOB:</span> {user.dob}
               </p>
               <p>
                 <span className="card_detailsCard--key">ID:</span>
-                0x514c05A9869398e0C9ceE93D392164e2BF301569
+                {user.id}
+              </p>
+              <p>
+                <span className="card_detailsCard--key">Address:</span>
+                {user.userAddress}
               </p>
             </Card>
           </div>
@@ -33,7 +41,7 @@ const PatientScreen = () => {
             <Card>
               <p className="card_detailsCard--header">Total Upload Records</p>
               <p>
-                <span className="card_detailsCard--key">10</span>
+                <span className="card_detailsCard--key">{user.dataSize}</span>
               </p>
             </Card>
             <Card>
