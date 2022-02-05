@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Redirect } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 import mediStore from "web3_config/medistore";
 import { AppContext } from "context/AppContext";
 import ClipLoader from "react-spinners/BounceLoader";
@@ -16,10 +15,16 @@ const RolesScreen = () => {
       setUser({ ...userData });
       if (userData.role !== "")
         setNotificationTostValue("Details Fetch Successfully");
-      setLoading(false);
     } catch (err) {
+      setUser({
+        name: "",
+        role: "",
+        userAddress: "",
+        id: "",
+      });
       setNotificationTostValue("Error While Fetching User Data");
     }
+    setLoading(false);
   };
 
   useEffect(() => {
