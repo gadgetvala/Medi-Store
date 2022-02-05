@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { AppContext } from "context/AppContext";
-import { useParams } from "react-router-dom";
+import { useParams, Redirect } from "react-router-dom";
 import mediStore from "web3_config/medistore";
 import web3 from "web3_config/web3";
 import ClipLoader from "react-spinners/BounceLoader";
@@ -9,7 +9,7 @@ import "./styles.css";
 const RegisterScreen = () => {
   let { slug } = useParams();
   const [loading, setLoading] = useState(false);
-  const { setUser } = useContext(AppContext);
+  const { user, setUser, setNotificationTostValue } = useContext(AppContext);
 
   // Text Controller
   const [nameController, setNameController] = useState("");
@@ -30,7 +30,7 @@ const RegisterScreen = () => {
     setLoading(true);
     try {
       const accounts = await web3.eth.getAccounts();
-
+      console.log(accounts[0]);
       await mediStore.methods
         .newUser(nameController, slug, dobController, addressController)
         .send({
@@ -41,9 +41,21 @@ const RegisterScreen = () => {
       setUser((previousUser) => ({ ...previousUser, ...userData }));
     } catch (err) {
       console.log(err);
+      setNotificationTostValue(err);
+      setUser((previousUser) => ({}));
     }
     setLoading(false);
   };
+
+  if (user.role !== "") setNotificationTostValue("User Register Successfully");
+
+  if (user.role !== "" && user.role === "Patient") {
+    return <Redirect to="/patient" />;
+  }
+
+  if (user.role !== "" && user.role === "Doctor") {
+    return <Redirect to="/doctor" />;
+  }
 
   if (loading) {
     return (
