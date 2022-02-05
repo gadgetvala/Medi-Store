@@ -1,11 +1,11 @@
-import React, { useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import Header from "components/header/Header";
 import Card from "components/card/Card";
 import { AppContext } from "context/AppContext";
 import "./styles.css";
 
 const PatientScreen = () => {
-  const { user, setNotificationTostValue } = useContext(AppContext);
+  const { user } = useContext(AppContext);
 
   console.log(user);
   return (
