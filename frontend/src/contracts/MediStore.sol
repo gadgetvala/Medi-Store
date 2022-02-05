@@ -1,8 +1,24 @@
-pragma solidity 0.5.0;
+pragma solidity >=0.5.0;
 
 contract MediStore {
+    /**
+     * List Of Every User Details.
+     * mapping: userAddress -> userDetails
+     */
     mapping(address => User) users;
 
+    /**
+     * A user can specify, which doctors are allowed to view their medical records.
+     * Access is granted, when the user adds his address to a doctors list of patients.
+     * As soon as the user address is removed from the list, access for the doctor is revoked.
+     *
+     * mapping: doctorsAddress -> patientsAddresses
+     */
+    mapping(address => address[]) public doctorsPermissions;
+
+    /**
+     * Patient & Doctor Structure
+     */
     struct User {
         address id;
         string name;
@@ -12,15 +28,15 @@ contract MediStore {
         string[] data;
     }
 
-    // Create a new user.
+    /**
+     * Create a new user
+     */
     function newUser(
         string memory _name,
         string memory _role,
         string memory _dob,
         string memory _userAddress
     ) public {
-        // In a mapping, all elements are defined. They're just empty by default
-        // So, just setting the id will create a new user;
         users[msg.sender].id = msg.sender;
         users[msg.sender].name = _name;
         users[msg.sender].role = _role;
@@ -28,18 +44,24 @@ contract MediStore {
         users[msg.sender].userAddress = _userAddress;
     }
 
-    // Get User Address
+    /**
+     * Get User Address
+     */
     function getUserAddress() public view returns (address) {
         return msg.sender;
     }
 
-    // Add Image
+    /**
+     * Add Imag
+     */
     function addImage(string memory _data) public {
         users[msg.sender].data.push(_data);
     }
 
-    // Solidity can't return string arrays. So we'll have to provide the _dataIndex
-    // Of the piece of data we want
+    /*
+     * Solidity can't return string arrays,
+     * So we'll have to give the index.
+     */
     function getUserData()
         public
         view
@@ -62,13 +84,46 @@ contract MediStore {
         );
     }
 
-    // Returns the amount of strings in a User's data array
+    /**
+     * Returns User Data Length
+     */
     function getDataSize() public view returns (uint256) {
         return users[msg.sender].data.length;
     }
 
-    // Returns the amount of strings in a User's data array
+    /**
+     * Returns User Data Hash of Particular Index
+     */
     function getData(uint256 _index) public view returns (string memory) {
         return users[msg.sender].data[_index];
+    }
+
+    /**
+     * Allow a doctor to view all your documents.
+     */
+    function giveAccessToDoctor(address doctor) public {
+        doctorsPermissions[doctor].push(msg.sender);
+    }
+
+    /**
+     * Revoke a doctors access to your documents.
+     */
+    function revokeAccessFromDoctor(address doctor, uint256 index) public {
+        require(
+            doctorsPermissions[doctor][index] == msg.sender,
+            "You can only revoke access to your own documents."
+        );
+        delete doctorsPermissions[doctor][index];
+    }
+
+    /**
+     * Returns all the patients addresses that gave the doctor access.
+     */
+    function getDoctorsPermissions(address doctor)
+        public
+        view
+        returns (address[] memory)
+    {
+        return doctorsPermissions[doctor];
     }
 }
