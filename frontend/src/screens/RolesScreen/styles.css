@@ -27,3 +27,93 @@
 .rolesScreen > a:nth-child(2):hover {
   background-color: #61e07f;
 }
+
+.hero-area {
+  background-image: url(../../assets/bg.jpg);
+  height: 92vh;
+}
+
+.hero-content .title span {
+  color: #ffc000;
+}
+.hero-content .title p {
+  margin: 0;
+}
+
+.hero-content .title {
+  font-size: 60px;
+  line-height: 80px;
+  color: #f8fbff;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  padding-right: 40px;
+  padding-bottom: 55px;
+  margin: 0 !important;
+}
+
+.nav {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
+
+.nav li {
+  padding: 5px;
+}
+
+.row {
+  display: flex;
+}
+
+.main-btn {
+  display: inline-block;
+  position: relative;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+  border: 0;
+  padding: 0 68px 0 38px;
+  font-size: 17px;
+  height: 60px;
+  line-height: 62.5px;
+  border-radius: 40px;
+  color: white;
+  cursor: pointer;
+  z-index: 5;
+  -webkit-transition: all 0.4s ease-out 0s;
+  transition: all 0.4s ease-out 0s;
+  letter-spacing: -0.02em;
+  background-color: #1a543c;
+  -webkit-box-shadow: 0px 10px 30px rgba(255, 190, 0, 0.2);
+  box-shadow: 0px 10px 30px rgba(255, 190, 0, 0.2);
+}
+
+.main-btn:hover {
+  background-color: #ffc000;
+  color: #0b6749;
+}
+
+.hero-content {
+  padding: 150px 100px;
+}
+
+.screenBG {
+  position: fixed;
+  bottom: 10%;
+  right: 5px;
+}
+
+.screenBG img {
+  width: 600px;
+}
+
+.fas {
+  position: absolute;
+  top: 22px;
+  right: 10%;
+  color: #ffc000;
+}

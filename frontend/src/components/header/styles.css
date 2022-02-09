@@ -1,14 +1,21 @@
 .headerComponent {
   height: 10vh;
-  background-color: #22577a;
   padding: 0 5rem 0 5rem;
   display: flex;
+  background-image: url(../../assets/bg.jpg);
   align-items: center;
   justify-content: space-between;
 }
 
 .headerComponent img {
-  height: 4rem;
+  height: 6rem;
+}
+
+.headerComponent h1{
+  color: black;
+  position:absolute;
+  left: 11%;
+  color: whitesmoke;
 }
 
 .headerComponent > p {

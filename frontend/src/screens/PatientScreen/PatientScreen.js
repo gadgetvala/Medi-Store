@@ -1,13 +1,20 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Header from "components/header/Header";
 import Card from "components/card/Card";
 import { AppContext } from "context/AppContext";
 import "./styles.css";
+import { Button, Col, FormGroup, Input, Row } from "reactstrap";
+import { Link } from "react-router-dom";
+import Modal from "react-bootstrap/Modal";
 
 const PatientScreen = () => {
   const { user } = useContext(AppContext);
+  const [newRocord, setNewRocord] = useState(false);
+  const [newPermission, setNewPermission] = useState(false);
 
-  console.log(user);
+  const handleNewRecord = (name) => (event) => {};
+  const handleNewDoctor = (name) => (event) => {};
+
   return (
     <div>
       <Header name={user.name} />
@@ -16,7 +23,6 @@ const PatientScreen = () => {
           <h2>Patient Data</h2>
           <div>
             <Card>
-              <p className="card_detailsCard--header">Patient Details</p>
               <p>
                 <span className="card_detailsCard--key">Name:</span> {user.name}
               </p>
@@ -37,40 +43,149 @@ const PatientScreen = () => {
 
         <div className="patientScreen_data">
           <h2>Records</h2>
-          <div>
-            <Card>
-              <p className="card_detailsCard--header">Total Upload Records</p>
-              <p>
-                <span className="card_detailsCard--key">{user.dataSize}</span>
-              </p>
-            </Card>
-            <Card>
-              <p className="card_detailsCard--header">Add New Records</p>
-            </Card>
-            <Card>
-              <p className="card_detailsCard--header">View All Records</p>
-            </Card>
-          </div>
+          <Row>
+            <Col>
+              <Card>
+                <p className="card_detailsCard--header">Total Upload Records</p>
+                <p>
+                  <span className="card_detailsCard--key">10</span>
+                </p>
+              </Card>
+            </Col>
+            <Col>
+              <span
+                onClick={() => {
+                  setNewRocord(true);
+                }}
+              >
+                <Card>
+                  <p className="card_detailsCard--header">Add New Records</p>
+                </Card>
+              </span>
+            </Col>
+            <Col>
+              <Link to="/patient/record/view">
+                <Card>
+                  <p className="card_detailsCard--header">View All Records</p>
+                </Card>
+              </Link>
+            </Col>
+          </Row>
         </div>
-
         <div className="patientScreen_data">
-          <h2>Doctor</h2>
-          <div>
-            <Card>
-              <p className="card_detailsCard--header">Total Added Doctors</p>
-              <p>
-                <span className="card_detailsCard--key">10</span>
-              </p>
-            </Card>
-            <Card>
-              <p className="card_detailsCard--header">Add new Doctor</p>
-            </Card>
-            <Card>
-              <p className="card_detailsCard--header">View All Doctor</p>
-            </Card>
-          </div>
+          <h2>Records</h2>
+          <Row>
+            <Col>
+              <Card>
+                <p className="card_detailsCard--header">Total Added Doctors</p>
+                <p>
+                  <span className="card_detailsCard--key">10</span>
+                </p>
+              </Card>
+            </Col>
+            <Col>
+              <span
+                onClick={() => {
+                  setNewPermission(true);
+                }}
+              >
+                <Card>
+                  <p className="card_detailsCard--header">Add New Doctor</p>
+                </Card>
+              </span>
+            </Col>
+            <Col>
+              <Link to="/patient/doctor/view">
+                <Card>
+                  <p className="card_detailsCard--header">View All Doctor</p>
+                </Card>
+              </Link>
+            </Col>
+          </Row>
         </div>
       </div>
+      <Modal
+        show={newRocord}
+        onHide={() => setNewRocord(false)}
+        dialogClassName="my-modal"
+        aria-labelledby="example-custom-modal-styling-title"
+      >
+        <Modal.Header>
+          <Modal.Title id="example-custom-modal-styling-title">
+            Add New Document
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Row>
+            <Col>
+              <FormGroup>
+                <label className="form-control-label">Name</label>
+                <Input
+                  onChange={handleNewRecord("name")}
+                  id="example3cols1Input"
+                  placeholder="e.g.Blood Test"
+                  required
+                  type="text"
+                />
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <div className="custom-file">
+                <input
+                  className="custom-file-input"
+                  id="projectCoverUploads"
+                  type="file"
+                />
+              </div>
+            </Col>
+          </Row>
+          <br />
+          <Row>
+            <Col>
+              <Button block type="submit">
+                Submit
+              </Button>
+            </Col>
+          </Row>
+        </Modal.Body>
+      </Modal>
+      <Modal
+        show={newPermission}
+        onHide={() => setNewPermission(false)}
+        dialogClassName="my-modal"
+        aria-labelledby="example-custom-modal-styling-title"
+      >
+        <Modal.Header>
+          <Modal.Title id="example-custom-modal-styling-title">
+            Add New Doctor
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Row>
+            <Col>
+              <FormGroup>
+                <label className="form-control-label">ID</label>
+                <Input
+                  onChange={handleNewDoctor("name")}
+                  id="example3cols1Input"
+                  placeholder="e.g.ID"
+                  required
+                  type="text"
+                />
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Button block type="submit">
+                Submit
+              </Button>
+            </Col>
+          </Row>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

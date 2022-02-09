@@ -8,7 +8,8 @@ const Header = ({ name }) => {
   return (
     <div className="headerComponent">
       <img src={Logo} alt="Medi Store" />
-      <p>Hi, {name}</p>
+      <h1>MedBlock</h1>
+      {name ? <p>Hi, {name}</p> : null}
     </div>
   );
 };

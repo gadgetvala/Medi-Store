@@ -3,7 +3,10 @@ import { Redirect, Link } from "react-router-dom";
 import mediStore from "web3_config/medistore";
 import { AppContext } from "context/AppContext";
 import ClipLoader from "react-spinners/BounceLoader";
+import screenBG from "../../assets/rolebg.svg";
 import "./styles.css";
+import Header from "components/header/Header";
+import { Col, Container, Row } from "reactstrap";
 
 const RolesScreen = () => {
   const { user, setUser, setNotificationTostValue } = useContext(AppContext);
@@ -48,10 +51,40 @@ const RolesScreen = () => {
   }
 
   return (
-    <div className="rolesScreen">
-      <Link to="/register/Doctor">Doctor</Link>
-      <Link to="/register/Patient">Patient</Link>
-    </div>
+    <>
+      <Header />
+      <section className="hero-area bg_cover">
+        <Container fluid>
+          <Row>
+            <Col md="7">
+              <div className="hero-content">
+                <h1 className="title">
+                  <span>Privacy</span>
+                  <p>For you and family.</p>
+                </h1>
+                <ul className="nav">
+                  <li>
+                    <a className="main-btn" href="/register/Doctor">
+                      Continue as Doctor <i className="fas fa-angle-right"></i>
+                    </a>
+                  </li>
+                  <li>
+                    <a className="main-btn main-btn-2" href="/register/Patient">
+                      Continue as Patient<i className="fas fa-angle-right"></i>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </Col>
+            <Col md="4">
+              <div className="screenBG">
+                <img src={screenBG} />
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      </section>
+    </>
   );
 };
 
