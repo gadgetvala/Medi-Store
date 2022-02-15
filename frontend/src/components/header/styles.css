@@ -8,13 +8,14 @@
 }
 
 .headerComponent img {
-  height: 6rem;
+  height: 4rem;
 }
 
-.headerComponent h1{
+.headerComponent h1 {
   color: black;
-  position:absolute;
+  position: absolute;
   left: 11%;
+  font-size: 2rem;
   color: whitesmoke;
 }
 

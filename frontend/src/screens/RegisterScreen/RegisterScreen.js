@@ -19,37 +19,37 @@ const RegisterScreen = () => {
 
   // Functions
   const registerUser = async () => {
-    // if (
-    //   nameController === "" ||
-    //   dobController === "" ||
-    //   addressController === ""
-    // ) {
-    //   alert("Please Provide valid details");
-    //   return;
-    // }
+    if (
+      nameController === "" ||
+      dobController === "" ||
+      addressController === ""
+    ) {
+      alert("Please Provide valid details");
+      return;
+    }
 
-    // setLoading(true);
+    setLoading(true);
     try {
-      // const accounts = await web3.eth.getAccounts();
-      // console.log(accounts[0]);
-      // await mediStore.methods
-      //   .newUser(nameController, slug, dobController, addressController)
-      //   .send({
-      //     from: accounts[0],
-      //   });
-      // const userData = await mediStore.methods.getUserData().call();
-      // setUser((previousUser) => ({ ...previousUser, ...userData }));
+      const accounts = await web3.eth.getAccounts();
+      console.log(accounts[0]);
+      await mediStore.methods
+        .newUser(nameController, slug, dobController, addressController)
+        .send({
+          from: accounts[0],
+        });
+      const userData = await mediStore.methods.getUserData().call();
+      console.log(userData);
+      setUser((previousUser) => ({ ...previousUser, ...userData }));
     } catch (err) {
-      // console.log(err);
-      // setNotificationTostValue(err);
-      // setUser((previousUser) => ({}));
+      setNotificationTostValue(err);
+      setUser((previousUser) => ({}));
     }
     setLoading(false);
   };
 
-  // if (user.role !== "") setNotificationTostValue("User Register Successfully");
+  if (user.role !== "") setNotificationTostValue("User Register Successfully");
 
-  if (true) {
+  if (user.role !== "" && user.role === "Patient") {
     return <Redirect to="/patient" />;
   }
 

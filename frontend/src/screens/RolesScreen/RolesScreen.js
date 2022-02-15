@@ -15,6 +15,7 @@ const RolesScreen = () => {
   const checkUserExitOrNot = async () => {
     try {
       const userData = await mediStore.methods.getUserData().call();
+
       setUser({ ...userData });
       if (userData.role !== "")
         setNotificationTostValue("Details Fetch Successfully");
@@ -25,7 +26,7 @@ const RolesScreen = () => {
         userAddress: "",
         id: "",
       });
-      setNotificationTostValue("Error While Fetching User Data");
+      // setNotificationTostValue("Error While Fetching User Data");
     }
     setLoading(false);
   };
@@ -64,9 +65,9 @@ const RolesScreen = () => {
                 </h1>
                 <ul className="nav">
                   <li>
-                    <a className="main-btn" href="/register/Doctor">
+                    <Link className="main-btn" to="/register/Doctor">
                       Continue as Doctor <i className="fas fa-angle-right"></i>
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <a className="main-btn main-btn-2" href="/register/Patient">

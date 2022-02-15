@@ -6,14 +6,30 @@ import "./styles.css";
 import { Button, Col, FormGroup, Input, Row } from "reactstrap";
 import { Link } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
+import mediStore from "web3_config/medistore";
+import web3 from "web3_config/web3";
 
 const PatientScreen = () => {
-  const { user } = useContext(AppContext);
   const [newRocord, setNewRocord] = useState(false);
+  const [doctorsAddress, setDoctorAddress] = useState("");
   const [newPermission, setNewPermission] = useState(false);
+  const { user, setUser, setNotificationTostValue } = useContext(AppContext);
 
-  const handleNewRecord = (name) => (event) => {};
-  const handleNewDoctor = (name) => (event) => {};
+  const handleNewRecord = (name) => () => {};
+  const handleNewDoctor = async (event) => {
+    try {
+      const accounts = await web3.eth.getAccounts();
+      await mediStore.methods.giveAccessToDoctor(event.target.value).send({
+        from: accounts[0],
+      });
+      const userData = await mediStore.methods.getUserData().call();
+      console.log(userData);
+      setUser((previousUser) => ({ ...previousUser, ...userData }));
+    } catch (err) {
+      setNotificationTostValue(err);
+      setUser((previousUser) => ({}));
+    }
+  };
 
   return (
     <div>
@@ -168,7 +184,7 @@ const PatientScreen = () => {
               <FormGroup>
                 <label className="form-control-label">ID</label>
                 <Input
-                  onChange={handleNewDoctor("name")}
+                  onChange={(e) => setDoctorAddress(e.target.value)}
                   id="example3cols1Input"
                   placeholder="e.g.ID"
                   required
@@ -179,7 +195,7 @@ const PatientScreen = () => {
           </Row>
           <Row>
             <Col>
-              <Button block type="submit">
+              <Button block type="submit" onClick={handleNewDoctor}>
                 Submit
               </Button>
             </Col>
