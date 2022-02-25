@@ -1,33 +1,105 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useReducer } from "react";
 import Header from "components/header/Header";
 import Card from "components/card/Card";
 import { AppContext } from "context/AppContext";
 import "./styles.css";
-import { Button, Col, FormGroup, Input, Row } from "reactstrap";
+import { Col, Row } from "reactstrap";
 import { Link } from "react-router-dom";
-import Modal from "react-bootstrap/Modal";
 import mediStore from "web3_config/medistore";
 import web3 from "web3_config/web3";
+import CustomModal from "screens/PatientScreen/components/CustomModal";
+import ShowToast from "components/notificationToast/ShowToast";
+
+const INITAL_REDUCER_STATE = {
+  isActive_addDoctorModal: false,
+  isActive_removeDoctorModal: false,
+};
+
+const ACTIONS = {
+  TOGGLE_ADD_DOCTOR_MODAL: "toggle_AddDoctorModal",
+  TOGGLE_REMOVE_DOCTOR_MODAL: "toggle_RemoveDoctorModal",
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case ACTIONS.TOGGLE_ADD_DOCTOR_MODAL:
+      return {
+        ...state,
+        isActive_addDoctorModal: !state.isActive_addDoctorModal,
+      };
+    case ACTIONS.TOGGLE_REMOVE_DOCTOR_MODAL:
+      return {
+        ...state,
+        isActive_removeDoctorModal: !state.isActive_removeDoctorModal,
+      };
+    default:
+      return state;
+  }
+};
 
 const PatientScreen = () => {
-  const [newRocord, setNewRocord] = useState(false);
+  const [state, dispatch] = useReducer(reducer, INITAL_REDUCER_STATE);
   const [doctorsAddress, setDoctorAddress] = useState("");
-  const [newPermission, setNewPermission] = useState(false);
-  const { user, setUser, setNotificationTostValue } = useContext(AppContext);
+  const { user, setUser } = useContext(AppContext);
 
-  const handleNewRecord = (name) => () => {};
-  const handleNewDoctor = async (event) => {
+  const handleAddNewDoctor = async () => {
     try {
+      // Get User Accounts
       const accounts = await web3.eth.getAccounts();
-      await mediStore.methods.giveAccessToDoctor(event.target.value).send({
+
+      // Get All The Users of Doctor which user want to give permissions.
+      const _allUsersOfDoctor = await mediStore.methods
+        .getUsersOfParticularDoctor(doctorsAddress)
+        .call();
+
+      // Check Paitents has already add doctor
+      if (_allUsersOfDoctor.includes(accounts[0]))
+        throw new Error("Doctor Already Exist");
+
+      // Add New Doctor
+      await mediStore.methods.giveAccessToDoctor(doctorsAddress).send({
         from: accounts[0],
       });
       const userData = await mediStore.methods.getUserData().call();
-      console.log(userData);
+
+      // Setup Extra Things
+      setDoctorAddress("");
+      dispatch({ type: ACTIONS.TOGGLE_ADD_DOCTOR_MODAL });
       setUser((previousUser) => ({ ...previousUser, ...userData }));
-    } catch (err) {
-      setNotificationTostValue(err);
-      setUser((previousUser) => ({}));
+    } catch (error) {
+      ShowToast(error.message);
+    }
+  };
+
+  const handleRemoveDoctor = async () => {
+    try {
+      // Get User Accounts
+      const accounts = await web3.eth.getAccounts();
+
+      // Get All The Users of Doctor which user want to give permissions.
+      const _allUsersOfDoctor = await mediStore.methods
+        .getUsersOfParticularDoctor(doctorsAddress)
+        .call();
+
+      // Check Paitents has already add doctor
+      if (!_allUsersOfDoctor.includes(accounts[0]))
+        throw new Error("You Haven't add This Doctor.");
+
+      // Remove Doctor Access
+      const indexOfPatientAddress = _allUsersOfDoctor.indexOf(accounts[0]);
+      await mediStore.methods
+        .revokeAccessFromDoctor(doctorsAddress, indexOfPatientAddress)
+        .send({
+          from: accounts[0],
+        });
+
+      // Update User Data
+      const userData = await mediStore.methods.getUserData().call();
+      setDoctorAddress("");
+      dispatch({ type: ACTIONS.TOGGLE_REMOVE_DOCTOR_MODAL });
+      setUser((previousUser) => ({ ...previousUser, ...userData }));
+    } catch (error) {
+      ShowToast(error.message);
     }
   };
 
@@ -69,11 +141,7 @@ const PatientScreen = () => {
               </Card>
             </Col>
             <Col>
-              <span
-                onClick={() => {
-                  setNewRocord(true);
-                }}
-              >
+              <span onClick={() => {}}>
                 <Card>
                   <p className="card_detailsCard--header">Add New Records</p>
                 </Card>
@@ -89,119 +157,60 @@ const PatientScreen = () => {
           </Row>
         </div>
         <div className="patientScreen_data">
-          <h2>Records</h2>
+          <h2>Doctors</h2>
+          {/* Total Doctors */}
           <Row>
             <Col>
               <Card>
-                <p className="card_detailsCard--header">Total Added Doctors</p>
+                <p className="card_detailsCard--header">Total Doctors</p>
                 <p>
-                  <span className="card_detailsCard--key">10</span>
+                  <span className="card_detailsCard--key">
+                    {user.totalDoctors}
+                  </span>
                 </p>
               </Card>
             </Col>
-            <Col>
-              <span
-                onClick={() => {
-                  setNewPermission(true);
-                }}
-              >
-                <Card>
-                  <p className="card_detailsCard--header">Add New Doctor</p>
-                </Card>
-              </span>
+            {/* Add New Doctor Card */}
+            <Col
+              onClick={() =>
+                dispatch({ type: ACTIONS.TOGGLE_ADD_DOCTOR_MODAL })
+              }
+            >
+              <Card>
+                <p className="card_detailsCard--header">Add New Doctor</p>
+              </Card>
             </Col>
-            <Col>
-              <Link to="/patient/doctor/view">
-                <Card>
-                  <p className="card_detailsCard--header">View All Doctor</p>
-                </Card>
-              </Link>
+            {/* Remove Old Doctor Card  */}
+            <Col
+              onClick={() =>
+                dispatch({ type: ACTIONS.TOGGLE_REMOVE_DOCTOR_MODAL })
+              }
+            >
+              <Card>
+                <p className="card_detailsCard--header">Remove Doctor</p>
+              </Card>
             </Col>
           </Row>
         </div>
       </div>
-      <Modal
-        show={newRocord}
-        onHide={() => setNewRocord(false)}
-        dialogClassName="my-modal"
-        aria-labelledby="example-custom-modal-styling-title"
-      >
-        <Modal.Header>
-          <Modal.Title id="example-custom-modal-styling-title">
-            Add New Document
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Row>
-            <Col>
-              <FormGroup>
-                <label className="form-control-label">Name</label>
-                <Input
-                  onChange={handleNewRecord("name")}
-                  id="example3cols1Input"
-                  placeholder="e.g.Blood Test"
-                  required
-                  type="text"
-                />
-              </FormGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <div className="custom-file">
-                <input
-                  className="custom-file-input"
-                  id="projectCoverUploads"
-                  type="file"
-                />
-              </div>
-            </Col>
-          </Row>
-          <br />
-          <Row>
-            <Col>
-              <Button block type="submit">
-                Submit
-              </Button>
-            </Col>
-          </Row>
-        </Modal.Body>
-      </Modal>
-      <Modal
-        show={newPermission}
-        onHide={() => setNewPermission(false)}
-        dialogClassName="my-modal"
-        aria-labelledby="example-custom-modal-styling-title"
-      >
-        <Modal.Header>
-          <Modal.Title id="example-custom-modal-styling-title">
-            Add New Doctor
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Row>
-            <Col>
-              <FormGroup>
-                <label className="form-control-label">ID</label>
-                <Input
-                  onChange={(e) => setDoctorAddress(e.target.value)}
-                  id="example3cols1Input"
-                  placeholder="e.g.ID"
-                  required
-                  type="text"
-                />
-              </FormGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <Button block type="submit" onClick={handleNewDoctor}>
-                Submit
-              </Button>
-            </Col>
-          </Row>
-        </Modal.Body>
-      </Modal>
+      <CustomModal
+        header="Add New Doctor"
+        placeholder="eg: 0x5255975983B616Be5ADDbF735DA6cAEe384e2A1d"
+        onTextChange={(e) => setDoctorAddress(e.target.value)}
+        onSubmit={handleAddNewDoctor}
+        isActive={state.isActive_addDoctorModal}
+        setIsActive={() => dispatch({ type: ACTIONS.TOGGLE_ADD_DOCTOR_MODAL })}
+      />
+      <CustomModal
+        header="Remove Doctor"
+        placeholder="eg: 0x5255975983B616Be5ADDbF735DA6cAEe384e2A1d"
+        onTextChange={(e) => setDoctorAddress(e.target.value)}
+        onSubmit={handleRemoveDoctor}
+        isActive={state.isActive_removeDoctorModal}
+        setIsActive={() =>
+          dispatch({ type: ACTIONS.TOGGLE_REMOVE_DOCTOR_MODAL })
+        }
+      />
     </div>
   );
 };
