@@ -1,13 +1,14 @@
-pragma solidity >=0.5.0;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity >=0.8.0;
 
 contract MediStore {
-    /**
+    /*
      * List Of Every User Details.
      * mapping: userAddress -> userDetails
      */
     mapping(address => User) users;
 
-    /**
+    /*
      * A user can specify, which doctors are allowed to view their medical records.
      * Access is granted, when the user adds his address to a doctors list of patients.
      * As soon as the user address is removed from the list, access for the doctor is revoked.
@@ -16,7 +17,7 @@ contract MediStore {
      */
     mapping(address => address[]) public doctorsPermissions;
 
-    /**
+    /*
      * Patient & Doctor Structure
      */
     struct User {
@@ -26,9 +27,11 @@ contract MediStore {
         string dob;
         string userAddress;
         string[] data;
+        int256 totalDoctors;
+        int256 totalDocuments;
     }
 
-    /**
+    /*
      * Create a new user
      */
     function newUser(
@@ -42,16 +45,11 @@ contract MediStore {
         users[msg.sender].role = _role;
         users[msg.sender].dob = _dob;
         users[msg.sender].userAddress = _userAddress;
+        users[msg.sender].totalDoctors = 0;
+        users[msg.sender].totalDocuments = 0;
     }
 
-    /**
-     * Get User Address
-     */
-    function getUserAddress() public view returns (address) {
-        return msg.sender;
-    }
-
-    /**
+    /*
      * Add Imag
      */
     function addImage(string memory _data) public {
@@ -71,7 +69,8 @@ contract MediStore {
             string memory role,
             string memory dob,
             string memory userAddress,
-            uint256 dataSize
+            uint256 dataSize,
+            int256 totalDoctors
         )
     {
         return (
@@ -80,33 +79,35 @@ contract MediStore {
             users[msg.sender].role,
             users[msg.sender].dob,
             users[msg.sender].userAddress,
-            users[msg.sender].data.length
+            users[msg.sender].data.length,
+            users[msg.sender].totalDoctors
         );
     }
 
-    /**
+    /*
      * Returns User Data Length
      */
     function getDataSize() public view returns (uint256) {
         return users[msg.sender].data.length;
     }
 
-    /**
+    /*
      * Returns User Data Hash of Particular Index
      */
     function getData(uint256 _index) public view returns (string memory) {
         return users[msg.sender].data[_index];
     }
 
-    /**
-     * Allow a doctor to view all your documents.
+    /*
+     * Allow doctor to view all your documents.
      */
-    function giveAccessToDoctor(address doctor) public {
-        doctorsPermissions[doctor].push(msg.sender);
+    function giveAccessToDoctor(address _doctor) public {
+        users[msg.sender].totalDoctors += 1;
+        doctorsPermissions[_doctor].push(msg.sender);
     }
 
-    /**
-     * Revoke a doctors access to your documents.
+    /*
+     * Revoke doctors access from your documents.
      */
     function revokeAccessFromDoctor(address doctor, uint256 index) public {
         require(
@@ -114,16 +115,17 @@ contract MediStore {
             "You can only revoke access to your own documents."
         );
         delete doctorsPermissions[doctor][index];
+        users[msg.sender].totalDoctors -= 1;
     }
 
-    /**
-     * Returns all the patients addresses that gave the doctor access.
+    /*
+     * Get All User of Particular Doctor
      */
-    function getDoctorsPermissions(address doctor)
+    function getUsersOfParticularDoctor(address _doctor)
         public
         view
         returns (address[] memory)
     {
-        return doctorsPermissions[doctor];
+        return doctorsPermissions[_doctor];
     }
 }
