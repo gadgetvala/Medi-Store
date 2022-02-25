@@ -6,11 +6,12 @@ import web3 from "web3_config/web3";
 import ClipLoader from "react-spinners/BounceLoader";
 import "./styles.css";
 import Header from "components/header/Header";
+import ShowToast from "components/notificationToast/ShowToast";
 
 const RegisterScreen = () => {
   let { slug } = useParams();
   const [loading, setLoading] = useState(false);
-  const { user, setUser, setNotificationTostValue } = useContext(AppContext);
+  const { user, setUser } = useContext(AppContext);
 
   // Text Controller
   const [nameController, setNameController] = useState("");
@@ -24,30 +25,31 @@ const RegisterScreen = () => {
       dobController === "" ||
       addressController === ""
     ) {
-      alert("Please Provide valid details");
+      ShowToast("Please Provide valid details");
       return;
     }
 
     setLoading(true);
     try {
+      // Get User Accounts
       const accounts = await web3.eth.getAccounts();
-      console.log(accounts[0]);
+      // Create New User
       await mediStore.methods
         .newUser(nameController, slug, dobController, addressController)
         .send({
           from: accounts[0],
         });
-      const userData = await mediStore.methods.getUserData().call();
-      console.log(userData);
-      setUser((previousUser) => ({ ...previousUser, ...userData }));
+      // Save User Data
+      const _userData = await mediStore.methods.get_().call();
+      setUser((previousUser) => ({ ...previousUser, ..._userData }));
     } catch (err) {
-      setNotificationTostValue(err);
-      setUser((previousUser) => ({}));
+      ShowToast(err);
+      setUser({});
     }
     setLoading(false);
   };
 
-  if (user.role !== "") setNotificationTostValue("User Register Successfully");
+  if (user.role !== "") ShowToast("User Register Successfully");
 
   if (user.role !== "" && user.role === "Patient") {
     return <Redirect to="/patient" />;
