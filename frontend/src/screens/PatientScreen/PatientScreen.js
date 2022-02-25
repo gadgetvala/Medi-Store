@@ -1,25 +1,37 @@
+// Global Imports
 import React, { useContext, useState, useReducer } from "react";
-import Header from "components/header/Header";
-import Card from "components/card/Card";
-import { AppContext } from "context/AppContext";
-import "./styles.css";
-import { Col, Row } from "reactstrap";
+import { create } from "ipfs-http-client";
 import { Link } from "react-router-dom";
-import mediStore from "web3_config/medistore";
+// Functionality
 import web3 from "web3_config/web3";
-import CustomModal from "screens/PatientScreen/components/CustomModal";
+import mediStore from "web3_config/medistore";
+import { AppContext } from "context/AppContext";
+// Components
+import Card from "components/card/Card";
+import Header from "components/header/Header";
 import ShowToast from "components/notificationToast/ShowToast";
+// Screens
+import CustomModal from "screens/PatientScreen/components/CustomModal";
+import CustomUploadFileModal from "screens/PatientScreen/components/CustomUploadFileModal";
+// Styles
+import { Col, Row } from "reactstrap";
+import "./styles.css";
 
+// Reducer State
 const INITAL_REDUCER_STATE = {
   isActive_addDoctorModal: false,
   isActive_removeDoctorModal: false,
+  isActive_uploadDocumentModal: false,
 };
 
+// Reducer Actions
 const ACTIONS = {
   TOGGLE_ADD_DOCTOR_MODAL: "toggle_AddDoctorModal",
   TOGGLE_REMOVE_DOCTOR_MODAL: "toggle_RemoveDoctorModal",
+  TOGGLE_UPLOAD_DOCUMENT_MODAL: "toggle_UploadDocumentModal",
 };
 
+//Reducer Functions
 const reducer = (state, action) => {
   switch (action.type) {
     case ACTIONS.TOGGLE_ADD_DOCTOR_MODAL:
@@ -32,14 +44,23 @@ const reducer = (state, action) => {
         ...state,
         isActive_removeDoctorModal: !state.isActive_removeDoctorModal,
       };
+    case ACTIONS.TOGGLE_UPLOAD_DOCUMENT_MODAL:
+      return {
+        ...state,
+        isActive_uploadDocumentModal: !state.isActive_uploadDocumentModal,
+      };
     default:
       return state;
   }
 };
 
+/**
+ * Main Component
+ */
 const PatientScreen = () => {
   const [state, dispatch] = useReducer(reducer, INITAL_REDUCER_STATE);
   const [doctorsAddress, setDoctorAddress] = useState("");
+  const [selectedDoc, setSelectedDoc] = useState({});
   const { user, setUser } = useContext(AppContext);
 
   const handleAddNewDoctor = async () => {
@@ -60,7 +81,7 @@ const PatientScreen = () => {
       await mediStore.methods.giveAccessToDoctor(doctorsAddress).send({
         from: accounts[0],
       });
-      const userData = await mediStore.methods.getUserData().call();
+      const userData = await mediStore.methods.getUserData(accounts[0]).call();
 
       // Setup Extra Things
       setDoctorAddress("");
@@ -94,9 +115,41 @@ const PatientScreen = () => {
         });
 
       // Update User Data
-      const userData = await mediStore.methods.getUserData().call();
+      const userData = await mediStore.methods.getUserData(accounts[0]).call();
       setDoctorAddress("");
       dispatch({ type: ACTIONS.TOGGLE_REMOVE_DOCTOR_MODAL });
+      setUser((previousUser) => ({ ...previousUser, ...userData }));
+    } catch (error) {
+      ShowToast(error.message);
+    }
+  };
+
+  const handleUploadDocument = async () => {
+    try {
+      // Create IPFS Connection
+      const ipfsClient = await create({
+        host: "ipfs.infura.io",
+        port: 5001,
+        protocol: "https",
+      });
+
+      // Upload File to IPFS
+      const response = await ipfsClient.add(selectedDoc);
+
+      // Get User Accounts
+      const accounts = await web3.eth.getAccounts();
+
+      // Add Document Hash to Contract
+      await mediStore.methods.addPatientDocument(response.path).send({
+        from: accounts[0],
+      });
+
+      // Get Updated User Data
+      const userData = await mediStore.methods.getUserData(accounts[0]).call();
+
+      // UI Configurations
+      setSelectedDoc({});
+      dispatch({ type: ACTIONS.TOGGLE_UPLOAD_DOCUMENT_MODAL });
       setUser((previousUser) => ({ ...previousUser, ...userData }));
     } catch (error) {
       ShowToast(error.message);
@@ -136,19 +189,25 @@ const PatientScreen = () => {
               <Card>
                 <p className="card_detailsCard--header">Total Upload Records</p>
                 <p>
-                  <span className="card_detailsCard--key">10</span>
+                  <span className="card_detailsCard--key">
+                    {user.totalDocuments}
+                  </span>
                 </p>
               </Card>
             </Col>
             <Col>
-              <span onClick={() => {}}>
+              <span
+                onClick={() =>
+                  dispatch({ type: ACTIONS.TOGGLE_UPLOAD_DOCUMENT_MODAL })
+                }
+              >
                 <Card>
                   <p className="card_detailsCard--header">Add New Records</p>
                 </Card>
               </span>
             </Col>
             <Col>
-              <Link to="/patient/record/view">
+              <Link to="/patient/record">
                 <Card>
                   <p className="card_detailsCard--header">View All Records</p>
                 </Card>
@@ -209,6 +268,15 @@ const PatientScreen = () => {
         isActive={state.isActive_removeDoctorModal}
         setIsActive={() =>
           dispatch({ type: ACTIONS.TOGGLE_REMOVE_DOCTOR_MODAL })
+        }
+      />
+      <CustomUploadFileModal
+        header="Upload Document"
+        onChange={(e) => setSelectedDoc(e.target.files[0])}
+        onSubmit={handleUploadDocument}
+        isActive={state.isActive_uploadDocumentModal}
+        setIsActive={() =>
+          dispatch({ type: ACTIONS.TOGGLE_UPLOAD_DOCUMENT_MODAL })
         }
       />
     </div>
