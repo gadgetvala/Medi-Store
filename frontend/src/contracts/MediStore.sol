@@ -50,17 +50,9 @@ contract MediStore {
     }
 
     /*
-     * Add Imag
+     * Get User Data
      */
-    function addImage(string memory _data) public {
-        users[msg.sender].data.push(_data);
-    }
-
-    /*
-     * Solidity can't return string arrays,
-     * So we'll have to give the index.
-     */
-    function getUserData()
+    function getUserData(address _userAddress)
         public
         view
         returns (
@@ -69,33 +61,42 @@ contract MediStore {
             string memory role,
             string memory dob,
             string memory userAddress,
-            uint256 dataSize,
-            int256 totalDoctors
+            int256 totalDoctors,
+            int256 totalDocuments
         )
     {
         return (
-            users[msg.sender].id,
-            users[msg.sender].name,
-            users[msg.sender].role,
-            users[msg.sender].dob,
-            users[msg.sender].userAddress,
-            users[msg.sender].data.length,
-            users[msg.sender].totalDoctors
+            users[_userAddress].id,
+            users[_userAddress].name,
+            users[_userAddress].role,
+            users[_userAddress].dob,
+            users[_userAddress].userAddress,
+            users[_userAddress].totalDoctors,
+            users[_userAddress].totalDocuments
         );
     }
 
     /*
-     * Returns User Data Length
+     * Get All Patient Documents
      */
-    function getDataSize() public view returns (uint256) {
-        return users[msg.sender].data.length;
+    function getPatientDocuments() public view returns (string[] memory) {
+        return users[msg.sender].data;
     }
 
     /*
-     * Returns User Data Hash of Particular Index
+     * Add Patient Document
      */
-    function getData(uint256 _index) public view returns (string memory) {
-        return users[msg.sender].data[_index];
+    function addPatientDocument(string memory _data) public {
+        users[msg.sender].data.push(_data);
+        users[msg.sender].totalDocuments += 1;
+    }
+
+    /*
+     * Remove Patient Document
+     */
+    function removePatientDocument(uint256 _index) public {
+        delete users[msg.sender].data[_index];
+        users[msg.sender].totalDocuments -= 1;
     }
 
     /*
