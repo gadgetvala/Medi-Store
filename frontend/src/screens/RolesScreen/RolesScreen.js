@@ -1,21 +1,31 @@
+// Global Imports
 import React, { useEffect, useState, useContext } from "react";
 import { Redirect, Link } from "react-router-dom";
-import ClipLoader from "react-spinners/BounceLoader";
-import { Col, Container, Row } from "reactstrap";
+// Functionality Imports
+import web3 from "web3_config/web3";
 import mediStore from "web3_config/medistore";
 import { AppContext } from "context/AppContext";
-import screenBG from "../../assets/rolebg.svg";
-import "./styles.css";
-import Header from "components/header/Header";
 import ShowToast from "components/notificationToast/ShowToast";
+// Componets Imports
+import Header from "components/header/Header";
+import { Col, Container, Row } from "reactstrap";
+import ClipLoader from "react-spinners/BounceLoader";
+// Assets Imports
+import screenBG from "../../assets/rolebg.svg";
+// Styles Imports
+import "./styles.css";
 
+/**
+ * Roles Screen Component
+ */
 const RolesScreen = () => {
   const { user, setUser } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
 
   const checkUserExitOrNot = async () => {
     try {
-      const userData = await mediStore.methods.getUserData().call();
+      const accounts = await web3.eth.getAccounts();
+      const userData = await mediStore.methods.getUserData(accounts[0]).call();
 
       setUser({ ...userData });
       if (userData.role !== "") ShowToast("Details Fetch Successfully");
