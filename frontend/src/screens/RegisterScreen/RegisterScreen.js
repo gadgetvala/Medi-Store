@@ -1,13 +1,20 @@
+// Global Imports
 import React, { useState, useContext } from "react";
-import { AppContext } from "context/AppContext";
 import { useParams, Redirect } from "react-router-dom";
-import mediStore from "web3_config/medistore";
+// Functionality Imports
 import web3 from "web3_config/web3";
-import ClipLoader from "react-spinners/BounceLoader";
-import "./styles.css";
-import Header from "components/header/Header";
+import mediStore from "web3_config/medistore";
+import { AppContext } from "context/AppContext";
 import ShowToast from "components/notificationToast/ShowToast";
+// Componets Imports
+import Header from "components/header/Header";
+import ClipLoader from "react-spinners/BounceLoader";
+// Styles Imports
+import "./styles.css";
 
+/**
+ * Register Screens Componets
+ */
 const RegisterScreen = () => {
   let { slug } = useParams();
   const [loading, setLoading] = useState(false);
@@ -40,22 +47,21 @@ const RegisterScreen = () => {
           from: accounts[0],
         });
       // Save User Data
-      const _userData = await mediStore.methods.get_().call();
+      const _userData = await mediStore.methods.getUserData(accounts[0]).call();
       setUser((previousUser) => ({ ...previousUser, ..._userData }));
     } catch (err) {
       ShowToast(err);
-      setUser({});
     }
     setLoading(false);
   };
 
-  if (user.role !== "") ShowToast("User Register Successfully");
-
   if (user.role !== "" && user.role === "Patient") {
+    ShowToast("User Register Successfully");
     return <Redirect to="/patient" />;
   }
 
   if (user.role !== "" && user.role === "Doctor") {
+    ShowToast("User Register Successfully");
     return <Redirect to="/doctor" />;
   }
 
