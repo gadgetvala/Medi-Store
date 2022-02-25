@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Redirect, Link } from "react-router-dom";
+import ClipLoader from "react-spinners/BounceLoader";
+import { Col, Container, Row } from "reactstrap";
 import mediStore from "web3_config/medistore";
 import { AppContext } from "context/AppContext";
-import ClipLoader from "react-spinners/BounceLoader";
 import screenBG from "../../assets/rolebg.svg";
 import "./styles.css";
 import Header from "components/header/Header";
-import { Col, Container, Row } from "reactstrap";
+import ShowToast from "components/notificationToast/ShowToast";
 
 const RolesScreen = () => {
-  const { user, setUser, setNotificationTostValue } = useContext(AppContext);
+  const { user, setUser } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
 
   const checkUserExitOrNot = async () => {
@@ -17,22 +18,14 @@ const RolesScreen = () => {
       const userData = await mediStore.methods.getUserData().call();
 
       setUser({ ...userData });
-      if (userData.role !== "")
-        setNotificationTostValue("Details Fetch Successfully");
-    } catch (err) {
-      setUser({
-        name: "",
-        role: "",
-        userAddress: "",
-        id: "",
-      });
-      // setNotificationTostValue("Error While Fetching User Data");
-    }
+      if (userData.role !== "") ShowToast("Details Fetch Successfully");
+    } catch (err) {}
     setLoading(false);
   };
 
   useEffect(() => {
     checkUserExitOrNot();
+    // eslint-disable-next-line
   }, []);
 
   if (loading) {
@@ -79,7 +72,7 @@ const RolesScreen = () => {
             </Col>
             <Col md="4">
               <div className="screenBG">
-                <img src={screenBG} />
+                <img src={screenBG} alt="Main Background" />
               </div>
             </Col>
           </Row>
