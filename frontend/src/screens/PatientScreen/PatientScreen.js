@@ -68,6 +68,14 @@ const PatientScreen = () => {
       // Get User Accounts
       const accounts = await web3.eth.getAccounts();
 
+      // Check Doctor Exist Or Not
+      const doctorData = await mediStore.methods
+        .getUserData(doctorsAddress)
+        .call();
+
+      if (doctorData.role === "")
+        throw new Error("No Doctor With this Address");
+
       // Get All The Users of Doctor which user want to give permissions.
       const _allUsersOfDoctor = await mediStore.methods
         .getUsersOfParticularDoctor(doctorsAddress)
