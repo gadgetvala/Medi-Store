@@ -8,8 +8,8 @@ import NotificationToast from "components/notificationToast/NotificationToast";
 import RolesScreen from "screens/RolesScreen/RolesScreen";
 import DoctorScreen from "screens/DoctorScreen/DoctorScreen";
 import PatientScreen from "screens/PatientScreen/PatientScreen";
-import PatientDetails from "screens/DoctorScreen/patientDetails";
 import RegisterPatientScreen from "screens/RegisterScreen/RegisterScreen";
+import PatientListScreen from "screens/PatientListScreen/PatientListScreen";
 import PatientDocumentScreen from "screens/PatientDocumentScreen/PatientDocumentScreen";
 // Style Imports
 import "antd/dist/antd.css";
@@ -26,16 +26,20 @@ const App = () => {
           <Switch>
             <Route path="/" component={RolesScreen} exact />
             <Route path="/doctor" component={DoctorScreen} exact />
+            <Route
+              path="/doctor/patients"
+              component={PatientListScreen}
+              exact
+            />
+            <Route
+              path="/doctor/patients/:id"
+              component={PatientDocumentScreen}
+              exact
+            />
             <Route path="/patient" component={PatientScreen} exact />
             <Route
               path="/patient/record"
               component={PatientDocumentScreen}
-              exact
-            />
-            {/* <Route path="/doctor/patient/view" component={ViewPatient} exact /> */}
-            <Route
-              path="/doctor/patient/detail/:id"
-              component={PatientDetails}
               exact
             />
             <Route
