@@ -50,7 +50,7 @@ const RegisterScreen = () => {
       const _userData = await mediStore.methods.getUserData(accounts[0]).call();
       setUser((previousUser) => ({ ...previousUser, ..._userData }));
     } catch (err) {
-      ShowToast(err);
+      ShowToast(err.message);
     }
     setLoading(false);
   };
