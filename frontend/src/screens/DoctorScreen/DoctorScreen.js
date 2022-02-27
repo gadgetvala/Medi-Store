@@ -1,19 +1,20 @@
-import React, { useContext, useState } from "react";
-import Header from "components/header/Header";
-import Card from "components/card/Card";
-import { AppContext } from "context/AppContext";
-import "./styles.css";
-import { Button, Col, FormGroup, Input, Row } from "reactstrap";
+// Global Imports
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import Modal from "react-bootstrap/Modal";
+// Functionality Imports
+import { AppContext } from "context/AppContext";
+// Components Imports
+import Card from "components/card/Card";
+import Header from "components/header/Header";
+import { Col, Row } from "reactstrap";
+// Styles Imports
+import "./styles.css";
 
+/**
+ * Doctor Screen Component
+ */
 const DoctorScreen = () => {
   const { user } = useContext(AppContext);
-  const [newRocord, setNewRocord] = useState(false);
-  const [newPermission, setNewPermission] = useState(false);
-
-  const handleNewRecord = (name) => (event) => {};
-  const handleNewDoctor = (name) => (event) => {};
 
   return (
     <div>
@@ -48,12 +49,14 @@ const DoctorScreen = () => {
               <Card>
                 <p className="card_detailsCard--header">Total Patient Access</p>
                 <p>
-                  <span className="card_detailsCard--key">10</span>
+                  <span className="card_detailsCard--key">
+                    {user.totalPatient}
+                  </span>
                 </p>
               </Card>
             </Col>
             <Col>
-              <Link to="/doctor/patient/view">
+              <Link to="/doctor/patients">
                 <Card>
                   <p className="card_detailsCard--header">View All Patient</p>
                 </Card>
@@ -62,88 +65,6 @@ const DoctorScreen = () => {
           </Row>
         </div>
       </div>
-      <Modal
-        show={newRocord}
-        onHide={() => setNewRocord(false)}
-        dialogClassName="my-modal"
-        aria-labelledby="example-custom-modal-styling-title"
-      >
-        <Modal.Header>
-          <Modal.Title id="example-custom-modal-styling-title">
-            Add New Document
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Row>
-            <Col>
-              <FormGroup>
-                <label className="form-control-label">Name</label>
-                <Input
-                  onChange={handleNewRecord("name")}
-                  id="example3cols1Input"
-                  placeholder="e.g.Blood Test"
-                  required
-                  type="text"
-                />
-              </FormGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <div className="custom-file">
-                <input
-                  className="custom-file-input"
-                  id="projectCoverUploads"
-                  type="file"
-                />
-              </div>
-            </Col>
-          </Row>
-          <br />
-          <Row>
-            <Col>
-              <Button block type="submit">
-                Submit
-              </Button>
-            </Col>
-          </Row>
-        </Modal.Body>
-      </Modal>
-      <Modal
-        show={newPermission}
-        onHide={() => setNewPermission(false)}
-        dialogClassName="my-modal"
-        aria-labelledby="example-custom-modal-styling-title"
-      >
-        <Modal.Header>
-          <Modal.Title id="example-custom-modal-styling-title">
-            Add New Doctor
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Row>
-            <Col>
-              <FormGroup>
-                <label className="form-control-label">ID</label>
-                <Input
-                  onChange={handleNewDoctor("name")}
-                  id="example3cols1Input"
-                  placeholder="e.g.ID"
-                  required
-                  type="text"
-                />
-              </FormGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <Button block type="submit">
-                Submit
-              </Button>
-            </Col>
-          </Row>
-        </Modal.Body>
-      </Modal>
     </div>
   );
 };
