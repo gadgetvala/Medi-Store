@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { useParams } from "react-router-dom";
 // Functionality
 import web3 from "web3_config/web3";
 import mediStore from "web3_config/medistore";
@@ -45,14 +46,15 @@ const COLUMNS = [
  * Main Component
  */
 const PatientDocumentScreen = () => {
-  const [state, dispatch] = usePatientDocumentScreenState();
+  let { id } = useParams();
+  const [state, dispatch] = usePatientDocumentScreenState(id);
   const { user } = useContext(AppContext);
 
   const deleteDocuments = async (index) => {
-    try {
-      // Set State in Loading
-      dispatch({ type: ACTIONS.TOGGLE_LOADING, payload: true });
+    // Set State in Loading
+    dispatch({ type: ACTIONS.TOGGLE_LOADING, payload: true });
 
+    try {
       // Get User Accounts
       const accounts = await web3.eth.getAccounts();
 
@@ -63,29 +65,32 @@ const PatientDocumentScreen = () => {
 
       // Get New Documents array
       const _allUsersDocuments = await mediStore.methods
-        .getPatientDocuments()
+        .getPatientDocuments(accounts[0])
         .call();
 
       dispatch({ type: ACTIONS.LOAD_DOCUMENT, payload: _allUsersDocuments });
-      dispatch({ type: ACTIONS.TOGGLE_LOADING, payload: false });
     } catch (error) {
       ShowToast(error.message);
     }
+    dispatch({ type: ACTIONS.TOGGLE_LOADING, payload: false });
   };
 
   const buildData = () => {
     let data = state.documents.map((document, index) => {
       if (document === "" || document === null) return null;
 
-      let action = (
-        <Button
-          color="danger"
-          className="record_delete"
-          onClick={() => deleteDocuments(index)}
-        >
-          Delete
-        </Button>
-      );
+      let action =
+        id === null || id === undefined ? (
+          <Button
+            color="danger"
+            className="record_delete"
+            onClick={() => deleteDocuments(index)}
+          >
+            Delete
+          </Button>
+        ) : (
+          <></>
+        );
       let documentPreview = (
         <Image
           width={150}
