@@ -1,4 +1,5 @@
 import { useEffect, useReducer } from "react";
+import web3 from "web3_config/web3";
 import mediStore from "web3_config/medistore";
 
 // Reducer State
@@ -16,7 +17,7 @@ const ACTIONS = {
 /**
  * Main Hook
  */
-const usePatientDocumentScreenState = () => {
+const usePatientDocumentScreenState = (_address) => {
   //Reducer Functions
   const reducer = (state, action) => {
     switch (action.type) {
@@ -39,9 +40,15 @@ const usePatientDocumentScreenState = () => {
   const fetchUserDocuments = async () => {
     dispatch({ type: ACTIONS.TOGGLE_LOADING, payload: true });
 
+    // Get User Accounts
+    const accounts = await web3.eth.getAccounts();
+
+    // Set Address which we need to fetch
+    if (_address === undefined) _address = accounts[0];
+
     const _allUsersDocuments = await mediStore.methods
-      .getPatientDocuments()
-      .call();
+      .getPatientDocuments(_address)
+      .call({ from: accounts[0] });
 
     dispatch({ type: ACTIONS.TOGGLE_LOADING, payload: false });
     dispatch({ type: ACTIONS.LOAD_DOCUMENT, payload: _allUsersDocuments });
@@ -50,6 +57,7 @@ const usePatientDocumentScreenState = () => {
   // Use Effect
   useEffect(() => {
     fetchUserDocuments();
+    // eslint-disable-next-line
   }, []);
 
   // Setup Reducer
