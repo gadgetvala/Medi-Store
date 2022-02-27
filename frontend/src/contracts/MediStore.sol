@@ -29,6 +29,7 @@ contract MediStore {
         string[] data;
         int256 totalDoctors;
         int256 totalDocuments;
+        int256 totalPatient;
     }
 
     /*
@@ -47,6 +48,7 @@ contract MediStore {
         users[msg.sender].userAddress = _userAddress;
         users[msg.sender].totalDoctors = 0;
         users[msg.sender].totalDocuments = 0;
+        users[msg.sender].totalPatient = 0;
     }
 
     /*
@@ -62,25 +64,37 @@ contract MediStore {
             string memory dob,
             string memory userAddress,
             int256 totalDoctors,
-            int256 totalDocuments
+            int256 totalDocuments,
+            int256 totalPatient
         )
     {
+        /* Store Data in Memory
+         * Directly Processing deeping Nested Object,
+         * Create Issue
+         */
+        User memory _user = users[_userAddress];
+
         return (
-            users[_userAddress].id,
-            users[_userAddress].name,
-            users[_userAddress].role,
-            users[_userAddress].dob,
-            users[_userAddress].userAddress,
-            users[_userAddress].totalDoctors,
-            users[_userAddress].totalDocuments
+            _user.id,
+            _user.name,
+            _user.role,
+            _user.dob,
+            _user.userAddress,
+            _user.totalDoctors,
+            _user.totalDocuments,
+            _user.totalPatient
         );
     }
 
     /*
      * Get All Patient Documents
      */
-    function getPatientDocuments() public view returns (string[] memory) {
-        return users[msg.sender].data;
+    function getPatientDocuments(address _userAddress)
+        public
+        view
+        returns (string[] memory)
+    {
+        return users[_userAddress].data;
     }
 
     /*
@@ -103,20 +117,28 @@ contract MediStore {
      * Allow doctor to view all your documents.
      */
     function giveAccessToDoctor(address _doctor) public {
+        // Update User Total Doctos Count
         users[msg.sender].totalDoctors += 1;
+        // Update Doctor Total Patient Count
+        users[_doctor].totalPatient += 1;
+        // Give Access to Doctor
         doctorsPermissions[_doctor].push(msg.sender);
     }
 
     /*
      * Revoke doctors access from your documents.
      */
-    function revokeAccessFromDoctor(address doctor, uint256 index) public {
+    function revokeAccessFromDoctor(address _doctor, uint256 _index) public {
         require(
-            doctorsPermissions[doctor][index] == msg.sender,
+            doctorsPermissions[_doctor][_index] == msg.sender,
             "You can only revoke access to your own documents."
         );
-        delete doctorsPermissions[doctor][index];
+        // Remove User Address from Doctor Permission list
+        delete doctorsPermissions[_doctor][_index];
+        // Update Paitent Total Document Count
         users[msg.sender].totalDoctors -= 1;
+        // Update Doctor Total Patient Count
+        users[_doctor].totalPatient -= 1;
     }
 
     /*
