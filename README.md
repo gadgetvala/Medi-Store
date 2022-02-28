@@ -13,7 +13,6 @@
 
 https://user-images.githubusercontent.com/25782628/155971649-ff3349c2-2a07-4988-96a8-ac9aa5d4d071.mp4
 
-
 ## 🚀 &nbsp;Installation
 
 To clone and run this application, you'll need **[Git](https://git-scm.com)**, **[Node.js](https://nodejs.org/en/)**, **[Ganache](https://trufflesuite.com/ganache/index.html)** and **[Metamask](https://metamask.io/)** installed on your computer.
