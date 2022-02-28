@@ -11,7 +11,8 @@
 
 ## 🔥 &nbsp;Live Demo
 
-https://github.com/gadgetvala/Medi-Store/blob/19ed655c60d473e97bc2defc65c2097506bd7e99/src/assets/demo.mp4
+https://user-images.githubusercontent.com/25782628/155971649-ff3349c2-2a07-4988-96a8-ac9aa5d4d071.mp4
+
 
 ## 🚀 &nbsp;Installation
 
